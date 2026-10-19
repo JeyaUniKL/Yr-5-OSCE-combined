@@ -47,6 +47,7 @@
     }
     .header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .header-left h1 { font-size: 1.05rem; font-weight: 600; white-space: nowrap; }
+    
     .station-select {
       background: white;
       color: var(--text);
@@ -59,21 +60,18 @@
       cursor: pointer;
       max-width: 280px;
     }
-    .station-select:disabled {
-      background: #e2e8f0;
-      color: #475569;
-      cursor: not-allowed;
-      border-color: #cbd5e1;
-    }
-    .exam-badge {
+
+    /* EXAM LOCK BADGE (Replaces Dropdown in Exam Mode) */
+    .exam-lock-banner {
+      display: none;
       background: #fef08a;
       color: #854d0e;
-      font-size: 0.72rem;
+      border: 1px solid #facc15;
+      padding: 5px 12px;
+      border-radius: 6px;
       font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 12px;
-      letter-spacing: 0.5px;
-      display: none;
+      font-size: 0.82rem;
+      letter-spacing: 0.3px;
     }
     
     .header-controls { display: flex; gap: 8px; align-items: center; }
@@ -196,8 +194,10 @@
   <header>
     <div class="header-left">
       <h1>Pediatric OSCE</h1>
+      <!-- Dropdown for practice mode -->
       <select class="station-select" id="station-select" onchange="onStationChanged(this.value)"></select>
-      <span class="exam-badge" id="exam-badge">🔒 EXAM LOCKED</span>
+      <!-- Permanent locked banner for exam mode -->
+      <span class="exam-lock-banner" id="exam-lock-banner">🔒 EXAM ASSIGNED: <span id="locked-station-name"></span></span>
     </div>
     <div class="header-controls">
       <div class="key-wrapper">
@@ -266,6 +266,41 @@
     { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
   ];
 
+  // SMART KEY RESOLVER (Supports short names like "dengue", "asthma", "febrile")
+  function resolveStationKey(rawKey) {
+    if (!rawKey) return null;
+    const clean = rawKey.toLowerCase().trim().replace(/\/$/, "");
+    
+    // Direct match
+    if (window.OSCE_STATIONS[clean]) return clean;
+
+    // Helpful shortcuts/aliases
+    const aliases = {
+      "dengue": "dengue_fever",
+      "asthma": "asthma_discharge",
+      "febrile": "febrile_convulsion",
+      "seizure": "febrile_convulsion",
+      "convulsion": "febrile_convulsion",
+      "nnj": "neonatal_jaundice",
+      "jaundice": "neonatal_jaundice",
+      "age": "gastroenteritis",
+      "gastro": "gastroenteritis",
+      "diarrhea": "gastroenteritis",
+      "thal": "thalassemia"
+    };
+
+    if (aliases[clean] && window.OSCE_STATIONS[aliases[clean]]) {
+      return aliases[clean];
+    }
+
+    // Partial substring match
+    for (const k in window.OSCE_STATIONS) {
+      if (k.includes(clean) || clean.includes(k)) return k;
+    }
+
+    return null;
+  }
+
   window.onload = () => {
     if (!window.OSCE_STATIONS || Object.keys(window.OSCE_STATIONS).length === 0) {
       alert("Error: stations.js failed to load.\n\nPlease check your GitHub repository:\n1. Ensure 'stations.js' is in the root directory.\n2. Ensure the filename is strictly all lowercase 'stations.js'.");
@@ -278,7 +313,6 @@
     const idInput = document.getElementById('candidate-id');
     if (storedCandidateId) idInput.value = storedCandidateId;
 
-    // Populate dropdown
     const select = document.getElementById('station-select');
     select.innerHTML = '';
     for (const key in window.OSCE_STATIONS) {
@@ -288,20 +322,29 @@
       select.appendChild(opt);
     }
 
-    // Check URL query parameter: ?station=... (Mode B: Direct Exam Link)
+    // Read URL query parameter: ?station=...
     const urlParams = new URLSearchParams(window.location.search);
-    const requested = urlParams.get('station');
-    
-    if (requested && window.OSCE_STATIONS[requested]) {
-      // --- EXAM LOCK MODE ACTIVE ---
+    const rawParam = urlParams.get('station');
+    const matchedKey = resolveStationKey(rawParam);
+
+    if (matchedKey) {
+      // --- EXAM LOCK MODE ENGAGED ---
       isExamMode = true;
-      select.value = requested;
-      select.disabled = true;
-      select.title = "Exam Mode: Station is locked by the examiner.";
-      document.getElementById('exam-badge').style.display = "inline-block";
-      loadStation(requested);
+      
+      // HIDE the dropdown completely so student cannot browse or switch
+      select.style.display = "none";
+
+      // SHOW the unclickable, locked banner
+      const banner = document.getElementById('exam-lock-banner');
+      banner.style.display = "inline-block";
+      document.getElementById('locked-station-name').innerText = window.OSCE_STATIONS[matchedKey].title;
+
+      loadStation(matchedKey);
     } else {
-      // Practice Mode (Dropdown active)
+      // --- PRACTICE MODE (Dropdown visible) ---
+      isExamMode = false;
+      select.style.display = "inline-block";
+      document.getElementById('exam-lock-banner').style.display = "none";
       const defaultKey = Object.keys(window.OSCE_STATIONS)[0];
       select.value = defaultKey;
       loadStation(defaultKey);
@@ -328,7 +371,7 @@
     document.getElementById('station-tasks').innerText = currentStation.candidateTasks;
     document.getElementById('system-welcome').innerText = currentStation.welcomeText;
 
-    // Reset station timer & transcript
+    // Reset station
     clearInterval(timerInterval);
     consultationSeconds = 600;
     document.getElementById('timer-display').innerText = "10:00";
@@ -341,9 +384,6 @@
       startBtn.style.background = "#10b981";
     }
     document.getElementById('candidate-id').disabled = false;
-    if (!isExamMode) {
-      document.getElementById('station-select').disabled = false;
-    }
   }
 
   function saveCandidateId() {
@@ -590,7 +630,7 @@
     if (isRecording && recognition) recognition.stop();
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     
-    // Only re-enable dropdown if not in direct exam mode
+    // In practice mode, restore dropdown; in exam mode, keep it hidden
     if (!isExamMode) {
       document.getElementById('station-select').disabled = false;
     }
