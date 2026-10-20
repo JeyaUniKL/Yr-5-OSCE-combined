@@ -13,7 +13,7 @@ window.OSCE_STATIONS = {
     childName: "Adam (4 years old)",
     parentName: "Puan Siti (Mother)",
     scenarioBrief: "You are a junior doctor in the pediatric ward. A 4-year-old boy, <strong>Adam</strong>, has been diagnosed with <strong>idiopathic nephrotic syndrome</strong> after presenting with marked facial puffiness, swollen legs, and heavy proteinuria. Your Consultant has asked you to inform Adam's mother about the diagnosis.",
-    candidateTasks: "Introduce yourself, explain the diagnosis in lay terms, counsel on treatment (steroids), home monitoring, side effects, precautions, and prognosis.",
+    candidateTasks: "Introduce yourself, explain the diagnosis and how you are going to manage him ",
     welcomeText: "Puan Siti is sitting beside Adam's bed, looking very distressed. Enter your Name/ID and click 'Start Consultation'.",
 
         systemPrompt: `
