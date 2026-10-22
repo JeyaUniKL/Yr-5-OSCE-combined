@@ -358,10 +358,10 @@ CRITICAL SAFETY CHECK (AUTO-FAIL): If candidate prescribes anti-motility agents 
   thalassemia: {
     id: "thalassemia",
     title: "Station 9: Beta-Thalassemia Major",
-    childName: "Harith (8 months old)",
+    childName: "Harith (15 months old)",
     parentName: "Encik Tariq (Father)",
     scenarioBrief: "You are a pediatric doctor in the hematology clinic. 8-month-old <strong>Harith</strong> has presented with severe pallor and hepatosplenomegaly (Hb 6.2 g/dL). Hb electrophoresis confirms <strong>Beta-Thalassemia Major</strong>. Break the diagnosis to his father and outline the management.",
-    candidateTasks: "Break diagnosis empathetically, explain thalassemia pathophysiology, discuss regular blood transfusions and iron chelation, provide genetic counseling, and recommend family screening.",
+    candidateTasks: "Break diagnosis empathetically, explain thalassemia and the management planned for Harith.",
     welcomeText: "Encik Tariq is sitting tensely, gripping his car keys. Enter your Name/ID and click 'Start Consultation'.",
 
     systemPrompt: `
