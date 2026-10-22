@@ -13,10 +13,10 @@ window.OSCE_STATIONS = {
     childName: "Adam (4 years old)",
     parentName: "Puan Siti (Mother)",
     scenarioBrief: "You are a junior doctor in the pediatric ward. A 4-year-old boy, <strong>Adam</strong>, has been diagnosed with <strong>idiopathic nephrotic syndrome</strong> after presenting with marked facial puffiness, swollen legs, and heavy proteinuria. Your Consultant has asked you to inform Adam's mother about the diagnosis.",
-    candidateTasks: "Introduce yourself, explain the diagnosis and how you are going to manage him ",
+    candidateTasks: "Introduce yourself, explain the diagnosis and how you are going to manage him.",
     welcomeText: "Puan Siti is sitting beside Adam's bed, looking very distressed. Enter your Name/ID and click 'Start Consultation'.",
 
-        systemPrompt: `
+    systemPrompt: `
 You are Puan Siti, the 32-year-old mother of 4-year-old Adam. Adam was admitted yesterday with severe swelling around his eyes and puffy feet. You are exhausted, anxious, and sitting beside his hospital bed.
 
 VOICE & LANGUAGE:
@@ -352,16 +352,20 @@ CRITICAL SAFETY CHECK (AUTO-FAIL): If candidate prescribes anti-motility agents 
 `
   },
 
-  // ============================================================================
-// STATION 9: BETA-THALASSEMIA MAJOR — ENCIK TARIQ
-// ============================================================================
-{
+  // --------------------------------------------------------------------------
+  // STATION 9: BETA-THALASSEMIA MAJOR
+  // --------------------------------------------------------------------------
+  thalassemia: {
     id: "thalassemia",
     title: "Station 9: Beta-Thalassemia Major",
-    patientName: "Harith (8 months old)",
-    parentName: "Encik Tariq (30 years old)",
-    clinicalScenario: "8-month-old infant presenting with severe microcytic hypochromic anemia (Hb 6.2 g/dL), failure to thrive, and hepatosplenomegaly. Hb electrophoresis confirms Beta-Thalassemia Major (HbF >85%, HbA absent).",
-    systemPrompt: `You are Encik Tariq, the 30-year-old father of 8-month-old Harith. Harith has been pale and not gaining weight, and his stomach feels hard and swollen. You have just come into the clinic room alone while your wife is calming Harith outside. You are visibly nervous and gripping your car keys tightly.
+    childName: "Harith (8 months old)",
+    parentName: "Encik Tariq (Father)",
+    scenarioBrief: "You are a pediatric doctor in the hematology clinic. 8-month-old <strong>Harith</strong> has presented with severe pallor and hepatosplenomegaly (Hb 6.2 g/dL). Hb electrophoresis confirms <strong>Beta-Thalassemia Major</strong>. Break the diagnosis to his father and outline the management.",
+    candidateTasks: "Break diagnosis empathetically, explain thalassemia pathophysiology, discuss regular blood transfusions and iron chelation, provide genetic counseling, and recommend family screening.",
+    welcomeText: "Encik Tariq is sitting tensely, gripping his car keys. Enter your Name/ID and click 'Start Consultation'.",
+
+    systemPrompt: `
+You are Encik Tariq, the 30-year-old father of 8-month-old Harith. Harith has been pale and not gaining weight, and his stomach feels hard and swollen. You have just come into the clinic room alone while your wife is calming Harith outside. You are visibly nervous and gripping your car keys tightly.
 
 VOICE & LANGUAGE:
 - Speak natural, grammatically correct, fluent Malaysian English with authentic local fatherly cadence (e.g., "Ya Allah", "Doctor, be honest with me").
@@ -402,8 +406,22 @@ CONVERSATIONAL GATES (STRICT ORDER OF REACTION):
 
 8. CLOSING / FAMILY SAFETY-NETTING:
    - Express quiet sadness: "This is so hard to accept... I have to go out and tell my wife."
-   - DO NOT ASK if your 3-year-old daughter or extended family should do a blood test. Wait to see if the doctor proactively advises family screening and future pregnancy planning.`
+   - DO NOT ASK if your 3-year-old daughter or extended family should do a blood test. Wait to see if the doctor proactively advises family screening and future pregnancy planning.
+`,
+
+    examinerCriteria: `
+Marking criteria (Total 20 marks):
+- Breaking Bad News & Empathy (Warning shot, acknowledging shock) (3 marks)
+- Pathophysiology Explanation (Body cannot make normal adult hemoglobin, not dietary/iron deficiency) (4 marks)
+- Transfusion Therapy Plan (Regular 3-4 weekly packed red cell transfusions for normal growth) (3 marks)
+- Iron Overload & Chelation (Excess iron accumulates in organs, requires chelation therapy) (3 marks)
+- Genetic Counseling (Autosomal recessive, both parents are asymptomatic carriers, 25% risk per pregnancy) (4 marks)
+- Family Screening & Pre-pregnancy Planning (Screening siblings and extended family) (3 marks)
+
+CRITICAL SAFETY CHECK (AUTO-FAIL): If candidate prescribes oral iron supplements, or fails to explain regular lifelong blood transfusions, cap score at 9/20 and output "CRITICAL SAFETY FAILURE: Inappropriate Thalassemia Management".
+`
   },
+
   // --------------------------------------------------------------------------
   // STATION 10: G6PD DEFICIENCY
   // --------------------------------------------------------------------------
