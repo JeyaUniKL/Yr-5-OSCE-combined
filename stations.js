@@ -406,7 +406,7 @@ CONVERSATIONAL GATES (STRICT ORDER OF REACTION):
 8. CLOSING / FAMILY SAFETY-NETTING:
    - Express quiet sadness: "This is so hard to accept... I have to go out and tell my wife."
    - DO NOT ASK if your 3-year-old daughter or extended family should do a blood test. Wait to see if the doctor proactively advises family screening and future pregnancy planning.`
-}
+},
 
   // --------------------------------------------------------------------------
   // STATION 10: G6PD DEFICIENCY
