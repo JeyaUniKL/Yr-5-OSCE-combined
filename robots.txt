@@ -1,0 +1,18 @@
+# Block known AI scrapers and general automated bots
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+# For all other general crawlers, allow access to public pages but block private folders
+User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
